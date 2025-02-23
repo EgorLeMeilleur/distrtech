@@ -1,0 +1,51 @@
+services:
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: EGOR2002egor
+      POSTGRES_DB: musicdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  create:
+    build:
+      context: ./database
+      dockerfile: Dockerfile.python
+    depends_on:
+      - postgres
+    command: ["python", "orchestrator.py", "--create"]
+
+  migrate:
+    build:
+      context: ./database
+      dockerfile: Dockerfile.python
+    depends_on:
+      - postgres
+    command: ["python", "orchestrator.py", "--migrate"]
+
+  export:
+    build:
+      context: ./database
+      dockerfile: Dockerfile.python
+    depends_on:
+      - postgres
+    command: ["python", "orchestrator.py", "--export"]
+
+  all:
+    build:
+      context: ./database
+      dockerfile: Dockerfile.python
+    depends_on:
+      - postgres
+    command: ["python", "orchestrator.py", "--all"]
+
+  csharp_export:
+    build:
+      context: ./export
+      dockerfile: Dockerfile.csharp
+
+volumes:
+  pgdata:
