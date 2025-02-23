@@ -46,7 +46,7 @@ namespace MusicExport
 
                 using (var workbook = new XLWorkbook())
                 {
-                    var worksheet = workbook.Worksheets.Add("Music Report");
+                    var worksheet = workbook.Worksheets.Add("Songs Report");
                     worksheet.Cell(1, 1).InsertTable(dt);
                     workbook.SaveAs(outputExcel);
                 }
