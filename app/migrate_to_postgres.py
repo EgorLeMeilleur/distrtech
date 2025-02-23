@@ -1,9 +1,38 @@
 import sqlite3
 import psycopg2
+from psycopg2 import sql
+import sys
 from config import POSTGRES, SQLITE_DB
+
+def create_postgres_db():
+    try:
+        conn = psycopg2.connect(
+            dbname='postgres',
+            user=POSTGRES["user"],
+            password=POSTGRES["password"],
+            host=POSTGRES["host"],
+            port=POSTGRES["port"]
+        )
+        conn.autocommit = True
+        cursor = conn.cursor()
+        
+        cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (POSTGRES["dbname"],))
+        if not cursor.fetchone():
+            cursor.execute(sql.SQL("CREATE DATABASE {};").format(sql.Identifier(POSTGRES["dbname"])))
+            print(f"Database '{POSTGRES['dbname']}' created successfully.")
+        else:
+            print(f"Database '{POSTGRES['dbname']}' already exists.")
+        
+        cursor.close()
+        conn.close()
+    except Exception as e:
+        print("Error creating PostgreSQL database:", e)
+        sys.exit(1)
 
 def migrate():
     try:
+        create_postgres_db()
+        
         sqlite_conn = sqlite3.connect(SQLITE_DB)
         sqlite_cursor = sqlite_conn.cursor()
 
@@ -14,7 +43,6 @@ def migrate():
             host=POSTGRES["host"],
             port=POSTGRES["port"]
         )
-
         pg_cursor = pg_conn.cursor()
 
         pg_cursor.execute("""

@@ -1,9 +1,9 @@
 POSTGRES = {
-    "dbname": "musicdb",
     "host": "localhost",
-    "port": "5432",
+    "port": "5433",
     "user": "postgres",
-    "password": "EGOR2002egor"
+    "password": "postgres",
+    "dbname": "musicdb"
 }
 
 SQLITE_DB = "music_non_normalized.db"
@@ -11,4 +11,4 @@ SQLITE_DB = "music_non_normalized.db"
 EXPORT_JSON = "export_data.json"
 EXPORT_EXCEL = "music_report.xlsx"
 
-CSHARP_EXPORT_EXEC = "../../export/MusicExport/MusicExport"  
+CSHARP_EXPORT_EXEC = "export/bin/Release/net8.0/export.exe"  

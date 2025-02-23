@@ -5,19 +5,19 @@ import sys
 
 def run_create_db():
     try:
-        subprocess.run(["python", "create_non_normalized_db.py"], check=True)
+        subprocess.run(["python", "app/create_non_normalized_db.py"], check=True)
     except subprocess.CalledProcessError as e:
         print("Error running create_non_normalized_db.py:", e)
 
 def run_migrate():
     try:
-        subprocess.run(["python", "migrate_to_postgres.py"], check=True)
+        subprocess.run(["python", "app/migrate_to_postgres.py"], check=True)
     except subprocess.CalledProcessError as e:
         print("Error running migrate_to_postgres.py:", e)
 
 def run_export():
     try:
-        subprocess.run(["python", "export_data.py"], check=True)
+        subprocess.run(["python", "app/export_data.py"], check=True)
     except subprocess.CalledProcessError as e:
         print("Error running export_data.py:", e)
 
