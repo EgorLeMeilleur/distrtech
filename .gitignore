@@ -5,3 +5,4 @@ venv/
 *obj/
 *.xlsx
 *.json
+**/__pycache__/

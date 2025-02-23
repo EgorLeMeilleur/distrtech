@@ -1,4 +1,3 @@
-# database/app/orchestrator.py
 import argparse
 import subprocess
 import sys
