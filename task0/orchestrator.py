@@ -31,24 +31,18 @@ if __name__ == "__main__":
     parser.add_argument("--label_name", type=str, help="Label name to filter export by")
     
     args = parser.parse_args()
-
+    print(args.label_name)
     if args.all:
         run_create_db()
         run_migrate()
-        if args.label_name:
-            run_export(args.label_name)
-        else:
-            run_export()
+        run_export(args.label_name)
     else:
         if args.create:
             run_create_db()
         if args.migrate:
             run_migrate()
         if args.export:
-            if args.label_name:
-                run_export(args.label_name)
-            else:
-                run_export()
+            run_export(args.label_name)
         if not (args.create or args.migrate or args.export):
             print("No valid arguments provided. Use --help for options.")
             sys.exit(1)
