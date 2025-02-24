@@ -17,17 +17,17 @@ def export_data(label_name=None):
         
         if label_name == "":
             query = """
-            SELECT
-                g.name AS group_name,
-                m.name AS musician_name,
-                i.name AS instrument_name,
-                l.name AS label_name
-            FROM
-                groups g
-                JOIN labels l ON g.label_id = l.id
-                JOIN musicians m ON g.id = m.group_id
-                JOIN musician_instruments mi ON m.id = mi.musician_id
-                JOIN instruments i ON mi.instrument_id = i.id
+                SELECT
+                    g.name AS group_name,
+                    m.name AS musician_name,
+                    i.name AS instrument_name,
+                    l.name AS label_name
+                FROM
+                    groups g
+                    JOIN labels l ON g.label_id = l.id
+                    JOIN musicians m ON g.id = m.group_id
+                    JOIN musician_instruments mi ON m.id = mi.musician_id
+                    JOIN instruments i ON mi.instrument_id = i.id
             """
             pg_cursor.execute(query)
         else:
