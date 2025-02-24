@@ -15,17 +15,13 @@ def run_migrate():
         print("Error running migrate_to_postgres.py:", e)
 
 def run_export(label_name=None):
-    if label_name:
-        try:
-            subprocess.run(["python", "app/export_data.py", label_name], check=True)
-        except subprocess.CalledProcessError as e:
-            print("Error running export_data.py:", e)
-    else:
-        try:
-            subprocess.run(["python", "app/export_all_data.py"], check=True)
-        except subprocess.CalledProcessError as e:
-            print("Error running export_all_data.py:", e)
-
+    if label_name is None:
+        label_name = ""
+    try:
+        subprocess.run(["python", "app/export_data.py", label_name], check=True)
+    except subprocess.CalledProcessError as e:
+        print("Error running export_data.py:", e)
+            
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Run database workflow steps.")
     parser.add_argument("--create", action="store_true", help="Run non-normalized DB creation")

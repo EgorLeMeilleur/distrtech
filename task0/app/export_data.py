@@ -4,7 +4,7 @@ import subprocess
 import argparse
 from config import POSTGRES, EXPORT_JSON, EXPORT_EXCEL, CSHARP_EXPORT_EXEC
 
-def export_data_label(label_name):
+def export_data(label_name=None):
     try:
         pg_conn = psycopg2.connect(
             user=POSTGRES["user"],
@@ -14,17 +14,34 @@ def export_data_label(label_name):
             dbname=POSTGRES["dbname"]
         )
         pg_cursor = pg_conn.cursor()
-
-        query = """
+        
+        if label_name == "":
+            query = """
             SELECT
-                g.name AS group_name
+                g.name AS group_name,
+                m.name AS musician_name,
+                i.name AS instrument_name,
+                l.name AS label_name
             FROM
                 groups g
-            JOIN labels l ON g.label_id = l.id
-            WHERE
-                l.name = %s
-        """
-        pg_cursor.execute(query, (label_name,))
+                JOIN labels l ON g.label_id = l.id
+                JOIN musicians m ON g.id = m.group_id
+                JOIN musician_instruments mi ON m.id = mi.musician_id
+                JOIN instruments i ON mi.instrument_id = i.id
+            """
+            pg_cursor.execute(query)
+        else:
+            query = """
+                SELECT
+                    g.name AS group_name
+                FROM
+                    groups g
+                JOIN labels l ON g.label_id = l.id
+                WHERE
+                    l.name = %s
+            """
+            pg_cursor.execute(query, (label_name,))
+    
         rows = pg_cursor.fetchall()
         columns = [desc[0] for desc in pg_cursor.description]
 
@@ -45,4 +62,4 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Export groups from a specific label.")
     parser.add_argument("label_name", type=str, help="The name of the label to filter groups by.")
     args = parser.parse_args()
-    export_data_label(args.label_name)
+    export_data(args.label_name)
