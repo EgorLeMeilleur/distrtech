@@ -5,7 +5,6 @@ import requests
 import threading
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from urllib.parse import urlparse, parse_qs
-from dotenv import load_dotenv
 
 class OAuthCallbackHandler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -48,8 +47,6 @@ class CallbackServer:
 
 
 def get_github_access_token():
-    load_dotenv()
-
     client_id = os.getenv("GITHUB_CLIENT_ID")
     client_secret = os.getenv("GITHUB_CLIENT_SECRET")
     if not client_id or not client_secret:
