@@ -1,16 +1,10 @@
 import requests
 
 def rgb_to_hex(rgb_str):
-    """
-    Convert an RGB string "R,G,B" into a 6-digit hex string.
-    Example: "255,0,0" -> "ff0000"
-    """
     try:
-        # Split the string and convert each part to an integer
         parts = [int(x.strip()) for x in rgb_str.split(',')]
         if len(parts) != 3 or any(not (0 <= x <= 255) for x in parts):
             raise ValueError("RGB values must be three numbers between 0 and 255.")
-        # Format to hex (without the leading '#')
         return "{:02x}{:02x}{:02x}".format(*parts)
     except Exception as e:
         print("Invalid RGB input:", e)

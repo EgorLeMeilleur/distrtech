@@ -107,6 +107,9 @@ def run():
                 else:
                     print("Deletion cancelled.")
 
+            else:
+                print("Invalid choice. Please select an option from 1 to 4.")
+
         elif choice == "2":
             print("\nLabels Management:")
             print("1. Create Label")
@@ -119,7 +122,7 @@ def run():
                 owner = input("Enter repository owner name: ")
                 repo = input("Enter repository name: ")
                 name = input("Enter label name: ")
-                color = input("Enter label color (6-digit hex without #): ")
+                color = input("Enter label color (6-digit hex without # or RGB in format R,G,B): ")
                 description = input("Enter label description (optional): ")
                 resp = client.create_label(owner, repo, name, color, description)
                 print("Status:", resp.status_code)
@@ -144,7 +147,7 @@ def run():
                 repo = input("Enter repository name: ")
                 current_name = input("Enter current label name: ")
                 new_name = input("Enter new label name (or leave blank): ")
-                color = input("Enter new label color (or leave blank): ")
+                color = input("Enter new label color (6-digit hex without # or RGB in format R,G,B or leave blank): ")
                 description = input("Enter new label description (or leave blank): ")
                 resp = client.update_label(owner, repo, current_name,
                                            new_name if new_name else None,
@@ -174,6 +177,9 @@ def run():
                 else:
                     print("Deletion cancelled.")
 
+            else:
+                print("Invalid choice. Please select an option from 1 to 4.")
+
         elif choice == "3":
             delete_token_files()
             print("Logged out. Please restart the application to log in again.")
@@ -184,7 +190,7 @@ def run():
             break
 
         else:
-            print("Invalid choice. Please select an option from 1 to 6.")
+            print("Invalid choice. Please select an option from 1 to 4.")
 
 if __name__ == "__main__":
     run()
