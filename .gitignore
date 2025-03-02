@@ -6,3 +6,6 @@ venv/
 *.xlsx
 *.json
 **/__pycache__/
+*.env
+*.enc
+*.key
