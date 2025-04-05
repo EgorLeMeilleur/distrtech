@@ -4,7 +4,6 @@ venv/
 *bin/
 *obj/
 *.xlsx
-*.json
 **/__pycache__/
 *.env
 *.enc
