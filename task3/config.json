@@ -5,7 +5,7 @@
         "port": 9999
       },
       "rabbitmq": {
-        "host": "localhost",
+        "host": "203.0.113.10",
         "queue": "data_queue"
       }
     },
