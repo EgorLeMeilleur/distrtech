@@ -1,0 +1,80 @@
+[
+    {
+        "group_name": "The Beatles",
+        "musician_name": "John Lennon",
+        "instrument_name": "Guitar",
+        "label_name": "universal"
+    },
+    {
+        "group_name": "The Beatles",
+        "musician_name": "John Lennon",
+        "instrument_name": "Piano",
+        "label_name": "universal"
+    },
+    {
+        "group_name": "The Beatles",
+        "musician_name": "Paul McCartney",
+        "instrument_name": "Bass",
+        "label_name": "universal"
+    },
+    {
+        "group_name": "The Beatles",
+        "musician_name": "George Harrison",
+        "instrument_name": "Guitar",
+        "label_name": "universal"
+    },
+    {
+        "group_name": "The Beatles",
+        "musician_name": "Ringo Starr",
+        "instrument_name": "Drums",
+        "label_name": "universal"
+    },
+    {
+        "group_name": "Queen",
+        "musician_name": "Freddie Mercury",
+        "instrument_name": "Vocals",
+        "label_name": "sony"
+    },
+    {
+        "group_name": "Queen",
+        "musician_name": "Brian May",
+        "instrument_name": "Guitar",
+        "label_name": "sony"
+    },
+    {
+        "group_name": "Queen",
+        "musician_name": "Roger Taylor",
+        "instrument_name": "Drums",
+        "label_name": "sony"
+    },
+    {
+        "group_name": "Queen",
+        "musician_name": "John Deacon",
+        "instrument_name": "Bass",
+        "label_name": "sony"
+    },
+    {
+        "group_name": "Led Zeppelin",
+        "musician_name": "Robert Plant",
+        "instrument_name": "Vocals",
+        "label_name": "warner"
+    },
+    {
+        "group_name": "Led Zeppelin",
+        "musician_name": "Jimmy Page",
+        "instrument_name": "Guitar",
+        "label_name": "warner"
+    },
+    {
+        "group_name": "Led Zeppelin",
+        "musician_name": "John Paul Jones",
+        "instrument_name": "Bass",
+        "label_name": "warner"
+    },
+    {
+        "group_name": "Led Zeppelin",
+        "musician_name": "John Bonham",
+        "instrument_name": "Drums",
+        "label_name": "warner"
+    }
+]
