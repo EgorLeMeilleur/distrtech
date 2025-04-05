@@ -54,6 +54,24 @@ def aes_decrypt(iv, ciphertext, key):
 # Функция вставки строки в нормализованную БД PostgreSQL
 def insert_normalized_data(group_name, musician_name, instrument_name, label_name):
     pg_conf = config["db"]["postgres"]
+
+    conn = psycopg2.connect(
+        dbname='postgres',
+        user=pg_conf["user"],
+        password=pg_conf["password"],
+        host=pg_conf["host"],
+        port=pg_conf["port"]
+    )
+    conn.autocommit = True
+    cursor = conn.cursor()
+    
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (pg_conf["dbname"],))
+    if not cursor.fetchone():
+        cursor.execute(sql.SQL("CREATE DATABASE {};").format(sql.Identifier(pg_conf["dbname"])))
+    
+    cursor.close()
+    conn.close()
+
     conn = psycopg2.connect(
         dbname=pg_conf["dbname"],
         user=pg_conf["user"],
