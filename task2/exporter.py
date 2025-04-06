@@ -33,6 +33,7 @@ def main():
         comm_key = QueueCommunication(queue_config, queue_config["host_key"])
 
     rsa_public_key = comm_key.receive_data()
+    print("Получен публичный ключ RSA")
     pem_public_key = json.loads(rsa_public_key)["public_key"]
     rsa_key = serialization.load_pem_public_key(pem_public_key.encode('utf-8'), backend=default_backend())
 
@@ -40,11 +41,13 @@ def main():
     encrypted_aes_key = encrypt_with_rsa(rsa_key, aes_key)
         
     comm_data.send_data(encrypted_aes_key)
+    print("Отправлен ключ AES")
     
     for row in data:
         json_data = json.dumps(row).encode('utf-8')
         encrypted_data = encrypt_with_aes(aes_key, json_data)
         comm_data.send_data(encrypted_data)
+        print("Отправлены данные:", json_data)
         time.sleep(1)
 
 if __name__ == "__main__":

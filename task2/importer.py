@@ -33,8 +33,10 @@ def main():
 
     send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
     comm_key.send_data(send_public_key)
+    print(f"Отправлен публичный ключ RSA")
 
     encrypted_aes_key = comm_data.receive_data()
+    print(f"Получен AES ключ")
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
     
     while True:
