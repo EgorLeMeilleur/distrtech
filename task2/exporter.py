@@ -33,6 +33,12 @@ def main():
         comm_key = QueueCommunication(queue_config, queue_config["host_key"])
 
     rsa_public_key = comm_key.receive_data(timeout=10)
+    if not rsa_public_key:
+        print("Нет данных или соединение прервано. Завершение импорта.")
+        comm_data.purge_queue()
+        comm_key.purge_queue()
+        return
+    
     print("Получен публичный ключ RSA")
     pem_public_key = json.loads(rsa_public_key)["public_key"]
     rsa_key = serialization.load_pem_public_key(pem_public_key.encode('utf-8'), backend=default_backend())
@@ -56,6 +62,9 @@ def main():
         except Exception as e:
             print(f"Ошибка при отправке данных: {e}")
             break
+        
+    comm_data.purge_queue()
+    comm_key.purge_queue()
 
 
 if __name__ == "__main__":

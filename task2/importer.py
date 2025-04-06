@@ -35,6 +35,12 @@ def main():
     comm_key.send_data(send_public_key)
     print(f"Отправлен публичный ключ RSA")
     encrypted_aes_key = comm_data.receive_data(timeout=10)
+    if not encrypted_aes_key:
+        print("Нет данных или соединение прервано. Завершение импорта.")
+        comm_data.purge_queue()
+        comm_key.purge_queue()
+        return
+    
     print(f"Получен AES ключ")
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
     
@@ -53,6 +59,9 @@ def main():
         except Exception as e:
             print(f"Ошибка при обработке данных: {e}")
             break
+    
+    comm_data.purge_queue()
+    comm_key.purge_queue()
 
 
 if __name__ == "__main__":
