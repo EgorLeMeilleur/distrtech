@@ -42,7 +42,7 @@ def main():
         
     comm_data.send_data(encrypted_aes_key)
     print("Отправлен ключ AES")
-    
+    time.sleep(3)
     for row in data:
         json_data = json.dumps(row).encode('utf-8')
         encrypted_data = encrypt_with_aes(aes_key, json_data)
