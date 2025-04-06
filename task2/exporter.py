@@ -45,7 +45,7 @@ def main():
         json_data = json.dumps(row).encode('utf-8')
         encrypted_data = encrypt_with_aes(aes_key, json_data)
         comm_data.send_data(encrypted_data)
-        time.sleep(0.5)
+        time.sleep(1)
 
 if __name__ == "__main__":
     main()
