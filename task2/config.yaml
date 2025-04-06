@@ -9,7 +9,7 @@ connection:
     host_key: 192.168.100.10
     port: 5672
     user: admin
-    password: 123
+    password: admin
     queue_name: data_queue
     exchange: data_exchange
     routing_key: data_key
