@@ -1,10 +1,7 @@
 import sqlite3
 import psycopg2
-from psycopg2 import sql
-import json
 
 def create_sqlite_db(db_path):
-    """Создание и заполнение ненормализованной базы данных SQLite"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
 
@@ -46,18 +43,14 @@ def create_sqlite_db(db_path):
     conn.close()
 
 def get_data_from_sqlite(db_path):
-    """Получение данных из SQLite"""
     conn = sqlite3.connect(db_path)
     cursor = conn.cursor()
-    
     cursor.execute("SELECT group_name, musician_name, instrument_name, label_name FROM music_data")
     data = cursor.fetchall()
-    
     conn.close()
     return data
 
 def insert_normalized_data(config, group_name, musician_name, instrument_name, label_name):
-    """Вставка данных в нормализованную БД PostgreSQL"""
     pg_conf = config["db"]["postgres"]
 
     conn = psycopg2.connect(
@@ -72,7 +65,7 @@ def insert_normalized_data(config, group_name, musician_name, instrument_name, l
     
     cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (pg_conf["dbname"],))
     if not cursor.fetchone():
-        cursor.execute(sql.SQL("CREATE DATABASE {};").format(sql.Identifier(pg_conf["dbname"])))
+        cursor.execute(psycopg2.sql.SQL("CREATE DATABASE {};").format(psycopg2.sql.Identifier(pg_conf["dbname"])))
     
     cursor.close()
     conn.close()
@@ -85,7 +78,7 @@ def insert_normalized_data(config, group_name, musician_name, instrument_name, l
         port=pg_conf["port"]
     )
     cursor = conn.cursor()
-    # Создаём таблицы, если они ещё не существуют
+
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS labels (
             id SERIAL PRIMARY KEY,
@@ -113,7 +106,6 @@ def insert_normalized_data(config, group_name, musician_name, instrument_name, l
     """)
     conn.commit()
     
-    # Логика нормализации
     cursor.execute("SELECT id FROM labels WHERE name = %s", (label_name,))
     label = cursor.fetchone()
     if label:

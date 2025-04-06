@@ -7,14 +7,12 @@ class SocketCommunication:
         self.port = port
     
     def send_data(self, data):
-        """Отправка данных через сокеты"""
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((self.host, self.port))
         client.sendall(data)
         client.close()
     
     def receive_data(self, buffer_size=4096):
-        """Приём данных через сокеты"""
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.bind((self.host, self.port))
         server.listen(1)
@@ -35,7 +33,6 @@ class QueueCommunication:
         self.routing_key = config["routing_key"]
     
     def send_data(self, data):
-        """Отправка данных через очередь сообщений"""
         credentials = pika.PlainCredentials(self.user, self.password)
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host=self.host,
@@ -57,7 +54,6 @@ class QueueCommunication:
         connection.close()
     
     def receive_data(self):
-        """Приём данных из очереди сообщений"""
         credentials = pika.PlainCredentials(self.user, self.password)
         connection = pika.BlockingConnection(pika.ConnectionParameters(
             host=self.host,

@@ -11,10 +11,6 @@ connection:
     queue_name: data_queue
     exchange: data_exchange
     routing_key: data_key
-  encryption:
-    aes_key_file: aes_key.bin
-    rsa_public_key_file: public_key.pem
-    rsa_private_key_file: private_key.pem
 
 db:
   sqlite:
