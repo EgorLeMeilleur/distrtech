@@ -4,6 +4,7 @@ import json
 from communication import SocketCommunication, QueueCommunication
 from db_utils import insert_normalized_data
 from crypto import generate_rsa_keys, decrypt_with_rsa, decrypt_with_aes
+from cryptography.hazmat.primitives import serialization
 
 def main():
     parser = argparse.ArgumentParser(description='Программа импорта данных')
@@ -26,7 +27,13 @@ def main():
         queue_config = config["connection"]["queue"]
         comm = QueueCommunication(queue_config)
 
-    comm.send_data(public_key)
+    pem_public_key = public_key.public_bytes(
+        encoding=serialization.Encoding.PEM,
+        format=serialization.PublicFormat.SubjectPublicKeyInfo
+    ).decode('utf-8')
+
+    send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
+    comm.send_data(send_public_key)
 
     encrypted_aes_key = comm.receive_data()
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
