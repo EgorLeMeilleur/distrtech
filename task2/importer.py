@@ -35,6 +35,7 @@ def main():
     comm_key.send_data(send_public_key)
     print(f"Отправлен публичный ключ RSA")
     encrypted_aes_key = comm_data.receive_data(timeout=10)
+    
     if not encrypted_aes_key:
         print("Нет данных или соединение прервано. Завершение импорта.")
         comm_data.purge_queue()

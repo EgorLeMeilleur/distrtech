@@ -58,7 +58,7 @@ def main():
             encrypted_data = encrypt_with_aes(aes_key, json_data)
             comm_data.send_data(encrypted_data)
             print("Отправлены данные:", json_data)
-            time.sleep(1)
+            time.sleep(0.5)
         except Exception as e:
             print(f"Ошибка при отправке данных: {e}")
             break
