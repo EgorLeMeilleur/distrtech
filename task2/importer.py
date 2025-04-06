@@ -34,18 +34,26 @@ def main():
     send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
     comm_key.send_data(send_public_key)
     print(f"Отправлен публичный ключ RSA")
-    time.sleep(5)
-    encrypted_aes_key = comm_data.receive_data()
+    encrypted_aes_key = comm_data.receive_data(timeout=10)
     print(f"Получен AES ключ")
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
-    time.sleep(15)
+    
     while True:
-        encrypted_data = comm_data.receive_data()
-        json_data = decrypt_with_aes(aes_key, encrypted_data)
-        data = json.loads(json_data.decode('utf-8'))
-        
-        insert_normalized_data(config, data[0], data[1], data[2], data[3])
-        print(f"Данные импортированы: {data}")
+        print("Ожидание данных...")
+        encrypted_data = comm_data.receive_data(timeout=10)
+        if not encrypted_data:
+            print("Нет данных или соединение прервано. Завершение импорта.")
+            break
+
+        try:
+            json_data = decrypt_with_aes(aes_key, encrypted_data)
+            data = json.loads(json_data.decode('utf-8'))
+            insert_normalized_data(config, data[0], data[1], data[2], data[3])
+            print(f"Данные импортированы: {data}")
+        except Exception as e:
+            print(f"Ошибка при обработке данных: {e}")
+            break
+
 
 if __name__ == "__main__":
     main()
