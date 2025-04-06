@@ -1,0 +1,4 @@
+cryptography>=3.4.0
+psycopg2-binary>=2.9.0
+pika>=1.2.0
+pyyaml>=6.0

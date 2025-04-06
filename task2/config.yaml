@@ -1,0 +1,27 @@
+connection:
+  socket:
+    host: 192.168.100.10
+    port: 5000
+  queue:
+    type: rabbitmq
+    host: 192.168.100.10
+    port: 5672
+    user: guest
+    password: guest
+    queue_name: data_queue
+    exchange: data_exchange
+    routing_key: data_key
+  encryption:
+    aes_key_file: aes_key.bin
+    rsa_public_key_file: public_key.pem
+    rsa_private_key_file: private_key.pem
+
+db:
+  sqlite:
+    path: nonnormalized.db
+  postgres:
+    host: localhost
+    port: 5432
+    user: postgres
+    password: postgres
+    dbname: normalized_music_db
