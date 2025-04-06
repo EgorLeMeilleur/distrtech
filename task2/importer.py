@@ -5,7 +5,7 @@ from communication import SocketCommunication, QueueCommunication
 from db_utils import insert_normalized_data
 from crypto import generate_rsa_keys, decrypt_with_rsa, decrypt_with_aes
 from cryptography.hazmat.primitives import serialization
-
+import time
 def main():
     parser = argparse.ArgumentParser(description='Программа импорта данных')
     parser.add_argument('--mode', choices=['socket', 'queue'], default='socket', help='Режим передачи данных')
@@ -34,11 +34,11 @@ def main():
     send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
     comm_key.send_data(send_public_key)
     print(f"Отправлен публичный ключ RSA")
-
+    time.sleep(5)
     encrypted_aes_key = comm_data.receive_data()
     print(f"Получен AES ключ")
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
-    
+    time.sleep(15)
     while True:
         encrypted_data = comm_data.receive_data()
         json_data = decrypt_with_aes(aes_key, encrypted_data)
