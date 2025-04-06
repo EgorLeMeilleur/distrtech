@@ -6,6 +6,7 @@ from db_utils import create_sqlite_db, get_data_from_sqlite
 from crypto import generate_aes_key, encrypt_with_aes, encrypt_with_rsa
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives import serialization
+import time
 
 def main():
     parser = argparse.ArgumentParser(description='Программа экспорта данных')
@@ -44,6 +45,7 @@ def main():
         json_data = json.dumps(row).encode('utf-8')
         encrypted_data = encrypt_with_aes(aes_key, json_data)
         comm_data.send_data(encrypted_data)
+        time.sleep(0.5)
 
 if __name__ == "__main__":
     main()

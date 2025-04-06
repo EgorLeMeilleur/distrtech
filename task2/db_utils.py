@@ -1,5 +1,6 @@
 import sqlite3
 import psycopg2
+from psycopg2 import sql
 
 def create_sqlite_db(db_path):
     conn = sqlite3.connect(db_path)
@@ -65,7 +66,7 @@ def insert_normalized_data(config, group_name, musician_name, instrument_name, l
     
     cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (pg_conf["dbname"],))
     if not cursor.fetchone():
-        cursor.execute(psycopg2.sql.SQL("CREATE DATABASE {};").format(psycopg2.sql.Identifier(pg_conf["dbname"])))
+        cursor.execute(sql.SQL("CREATE DATABASE {};").format(sql.Identifier(pg_conf["dbname"])))
     
     cursor.close()
     conn.close()
