@@ -21,25 +21,24 @@ def main():
 
     if args.mode == 'socket':
         socket_config = config["connection"]["socket"]
-        comm = SocketCommunication(socket_config["host"], socket_config["port"])
+        comm_data = SocketCommunication(socket_config["host_data"], socket_config["port"])
+        comm_key = SocketCommunication(socket_config["host_key"], socket_config["port"])
 
     elif args.mode == 'queue':
         queue_config = config["connection"]["queue"]
-        comm = QueueCommunication(queue_config)
+        comm_data = QueueCommunication(queue_config, queue_config["host_data"])
+        comm_key = QueueCommunication(queue_config, queue_config["host_key"])
 
-    pem_public_key = public_key.public_bytes(
-        encoding=serialization.Encoding.PEM,
-        format=serialization.PublicFormat.SubjectPublicKeyInfo
-    ).decode('utf-8')
+    pem_public_key = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
 
     send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
-    comm.send_data(send_public_key)
+    comm_key.send_data(send_public_key)
 
-    encrypted_aes_key = comm.receive_data()
+    encrypted_aes_key = comm_data.receive_data()
     aes_key = decrypt_with_rsa(private_key, encrypted_aes_key)
     
     while True:
-        encrypted_data = comm.receive_data()
+        encrypted_data = comm_data.receive_data()
         json_data = decrypt_with_aes(aes_key, encrypted_data)
         data = json.loads(json_data.decode('utf-8'))
         

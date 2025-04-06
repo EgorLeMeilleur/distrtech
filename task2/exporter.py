@@ -23,28 +23,27 @@ def main():
     
     if args.mode == 'socket':
         socket_config = config["connection"]["socket"]
-        comm = SocketCommunication(socket_config["host"], socket_config["port"])
+        comm_data = SocketCommunication(socket_config["host_data"], socket_config["port"])
+        comm_key = SocketCommunication(socket_config["host_key"], socket_config["port"])
 
     elif args.mode == 'queue':
         queue_config = config["connection"]["queue"]
-        comm = QueueCommunication(queue_config)
+        comm_data = QueueCommunication(queue_config, queue_config["host_data"])
+        comm_key = QueueCommunication(queue_config, queue_config["host_key"])
 
-    rsa_public_key = comm.receive_data()
+    rsa_public_key = comm_key.receive_data()
     pem_public_key = json.loads(rsa_public_key)["public_key"]
-    rsa_key = serialization.load_pem_public_key(
-        pem_public_key.encode('utf-8'), 
-        backend=default_backend()
-    )
+    rsa_key = serialization.load_pem_public_key(pem_public_key.encode('utf-8'), backend=default_backend())
 
     aes_key = generate_aes_key()
     encrypted_aes_key = encrypt_with_rsa(rsa_key, aes_key)
         
-    comm.send_data(encrypted_aes_key)
+    comm_data.send_data(encrypted_aes_key)
     
     for row in data:
         json_data = json.dumps(row).encode('utf-8')
         encrypted_data = encrypt_with_aes(aes_key, json_data)
-        comm.send_data(encrypted_data)
+        comm_data.send_data(encrypted_data)
 
 if __name__ == "__main__":
     main()

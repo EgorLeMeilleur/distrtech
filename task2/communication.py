@@ -23,8 +23,8 @@ class SocketCommunication:
         return data
 
 class QueueCommunication:
-    def __init__(self, config):
-        self.host = config["host"]
+    def __init__(self, config, host):
+        self.host = host
         self.port = config["port"]
         self.user = config["user"]
         self.password = config["password"]
