@@ -1,7 +1,7 @@
 connection:
   socket:
     host_data: 192.168.148.9
-    host_key: 192.168.148.9
+    host_key: 192.168.148.8
     port: 5000
   queue:
     type: rabbitmq
