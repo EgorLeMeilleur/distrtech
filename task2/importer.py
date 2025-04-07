@@ -23,17 +23,21 @@ def main():
     if args.mode == 'socket':
         socket_config = config["connection"]["socket"]
         comm_data = SocketCommunication(socket_config["host_data"], socket_config["port"])
-        comm_key = SocketCommunication(socket_config["host_key"], socket_config["port"])
+        
+        pem_public_key = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
+        send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
+        comm_data.send_data(send_public_key)
+        print(f"Отправлен публичный ключ RSA")
 
     elif args.mode == 'queue':
         queue_config = config["connection"]["queue"]
         comm_data = QueueCommunication(queue_config, queue_config["host_data"], queue_config["queue_data"], queue_config["exchange_data"], queue_config["routing_data"])
         comm_key = QueueCommunication(queue_config, queue_config["host_key"], queue_config["queue_key"], queue_config["exchange_key"], queue_config["routing_key"])
 
-    pem_public_key = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
-    send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
-    comm_key.send_data(send_public_key)
-    print(f"Отправлен публичный ключ RSA")
+        pem_public_key = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
+        send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
+        comm_key.send_data(send_public_key)
+        print(f"Отправлен публичный ключ RSA")
     
     encrypted_aes_key = comm_data.receive_data(timeout=10)
     if not encrypted_aes_key:
