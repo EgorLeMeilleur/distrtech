@@ -48,6 +48,7 @@ def main():
         
     comm_data.send_data(encrypted_aes_key)
     print("Отправлен ключ AES")
+    time.sleep(0.2)
     
     for row in data:
         if not row:
@@ -58,7 +59,7 @@ def main():
             encrypted_data = encrypt_with_aes(aes_key, json_data)
             comm_data.send_data(encrypted_data)
             print("Отправлены данные:", json_data)
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"Ошибка при отправке данных: {e}")
             break
