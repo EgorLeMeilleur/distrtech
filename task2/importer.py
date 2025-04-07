@@ -5,7 +5,7 @@ from communication import SocketCommunication, QueueCommunication
 from db_utils import insert_normalized_data
 from crypto import generate_rsa_keys, decrypt_with_rsa, decrypt_with_aes
 from cryptography.hazmat.primitives import serialization
-import time
+
 def main():
     parser = argparse.ArgumentParser(description='Программа импорта данных')
     parser.add_argument('--mode', choices=['socket', 'queue'], default='socket', help='Режим передачи данных')
