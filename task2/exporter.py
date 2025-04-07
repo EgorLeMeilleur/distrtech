@@ -62,10 +62,6 @@ def main():
         except Exception as e:
             print(f"Ошибка при отправке данных: {e}")
             break
-        
-    comm_data.purge_queue()
-    comm_key.purge_queue()
-
 
 if __name__ == "__main__":
     main()
