@@ -1,12 +1,12 @@
 connection:
   socket:
-    host_data: 192.168.100.3
-    host_key: 192.168.100.10
+    host_data: 192.168.148.9
+    host_key: 192.168.231.83
     port: 5000
   queue:
     type: rabbitmq
-    host_data: 192.168.100.3
-    host_key: 192.168.100.10
+    host_data: 192.168.148.9
+    host_key: 192.168.231.83
     port: 5672
     user: admin
     password: admin
