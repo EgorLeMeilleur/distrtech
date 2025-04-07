@@ -52,14 +52,14 @@ class SocketCommunication:
 
 
 class QueueCommunication:
-    def __init__(self, config, host):
+    def __init__(self, config, host, queue_name, exchange, routing_key):
         self.host = host
         self.port = config["port"]
         self.user = config["user"]
         self.password = config["password"]
-        self.queue_name = config["queue_name"]
-        self.exchange = config["exchange"]
-        self.routing_key = config["routing_key"]
+        self.queue_name = queue_name
+        self.exchange = exchange
+        self.routing_key = routing_key
     
     def send_data(self, data):
         credentials = pika.PlainCredentials(self.user, self.password)

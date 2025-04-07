@@ -3,7 +3,7 @@ import yaml
 import json
 from communication import SocketCommunication, QueueCommunication
 from db_utils import insert_normalized_data
-from crypto import generate_rsa_keys, decrypt_with_rsa, decrypt_with_aes
+from crypto import generate_rsa_keys, decrypt_with_rsa, decrypt_with_aes, load_or_generate_rsa_keys
 from cryptography.hazmat.primitives import serialization
 
 def main():
@@ -17,7 +17,8 @@ def main():
     with open(config_file, 'r') as file:
         config = yaml.safe_load(file)
 
-    private_key, public_key = generate_rsa_keys()
+    private_key, public_key = load_or_generate_rsa_keys()
+    # private_key, public_key = generate_rsa_keys()
 
     if args.mode == 'socket':
         socket_config = config["connection"]["socket"]
@@ -26,8 +27,8 @@ def main():
 
     elif args.mode == 'queue':
         queue_config = config["connection"]["queue"]
-        comm_data = QueueCommunication(queue_config, queue_config["host_data"])
-        comm_key = QueueCommunication(queue_config, queue_config["host_key"])
+        comm_data = QueueCommunication(queue_config, queue_config["host_data"], queue_config["queue_data"], queue_config["exchange_data"], queue_config["routing_data"])
+        comm_key = QueueCommunication(queue_config, queue_config["host_key"], queue_config["queue_key"], queue_config["exchange_key"], queue_config["routing_key"])
 
     pem_public_key = public_key.public_bytes(encoding=serialization.Encoding.PEM, format=serialization.PublicFormat.SubjectPublicKeyInfo).decode('utf-8')
     send_public_key = json.dumps({"public_key": pem_public_key}).encode('utf-8')
@@ -37,8 +38,6 @@ def main():
     encrypted_aes_key = comm_data.receive_data(timeout=10)
     if not encrypted_aes_key:
         print("Нет данных или соединение прервано. Завершение импорта.")
-        comm_data.purge_queue()
-        comm_key.purge_queue()
         return
     
     print(f"Получен AES ключ")

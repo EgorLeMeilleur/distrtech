@@ -10,9 +10,12 @@ connection:
     port: 5672
     user: admin
     password: admin
-    queue_name: data_queue
-    exchange: data_exchange
-    routing_key: data_key
+    queue_key: key_queue
+    queue_data: data_queue
+    exchange_key: key_exchange
+    exchange_data: data_exchange
+    routing_key: key_key
+    routing_data: data_key
 
 db:
   sqlite:
