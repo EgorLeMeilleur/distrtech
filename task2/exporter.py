@@ -29,14 +29,12 @@ def main():
 
     elif args.mode == 'queue':
         queue_config = config["connection"]["queue"]
-        comm_data = QueueCommunication(queue_config, queue_config["host_data"])
-        comm_key = QueueCommunication(queue_config, queue_config["host_key"])
+        comm_data = QueueCommunication(queue_config, queue_config["host_data"], queue_config["queue_data"], queue_config["exchange_data"], queue_config["routing_data"])
+        comm_key = QueueCommunication(queue_config, queue_config["host_key"], queue_config["queue_key"], queue_config["exchange_key"], queue_config["routing_key"])
 
     rsa_public_key = comm_key.receive_data(timeout=10)
     if not rsa_public_key:
         print("Нет данных или соединение прервано. Завершение импорта.")
-        comm_data.purge_queue()
-        comm_key.purge_queue()
         return
     
     print("Получен публичный ключ RSA")
@@ -48,6 +46,7 @@ def main():
         
     comm_data.send_data(encrypted_aes_key)
     print("Отправлен ключ AES")
+    time.sleep(0.2)
     
     for row in data:
         if not row:
@@ -58,14 +57,10 @@ def main():
             encrypted_data = encrypt_with_aes(aes_key, json_data)
             comm_data.send_data(encrypted_data)
             print("Отправлены данные:", json_data)
-            time.sleep(0.5)
+            time.sleep(0.2)
         except Exception as e:
             print(f"Ошибка при отправке данных: {e}")
             break
-        
-    comm_data.purge_queue()
-    comm_key.purge_queue()
-
 
 if __name__ == "__main__":
     main()

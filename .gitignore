@@ -8,3 +8,4 @@ venv/
 *.env
 *.enc
 *.key
+*.pem

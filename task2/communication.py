@@ -11,10 +11,13 @@ class SocketCommunication:
     def send_data(self, data):
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.connect((self.host, self.port))
-        client.sendall(data)
+        message_length = len(data)
+        header = message_length.to_bytes(4, byteorder='big')
+        message = header + data
+        client.sendall(message)
         client.close()
 
-    def receive_data(self, buffer_size=4096, timeout=10):
+    def receive_data(self, buffer_size=40, timeout=10):
         server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         server.bind((self.host, self.port))
@@ -31,10 +34,21 @@ class SocketCommunication:
             conn, addr = server.accept()
             conn.settimeout(timeout)
 
-            data = conn.recv(buffer_size)
+            raw_len = conn.recv(4)
+            message_length = int.from_bytes(raw_len, byteorder='big')
+
+            data = b""
+            while len(data) < message_length:
+                chunk = conn.recv(buffer_size)
+                if not chunk:
+                    print('crash')
+                    break
+                data += chunk
+
+            # data = conn.recv(buffer_size)
+
             conn.close()
             server.close()
-
             return data if data else None
 
         except socket.timeout:
@@ -46,20 +60,17 @@ class SocketCommunication:
             print(f"Socket error: {e}")
             server.close()
             return None
-        
-    def purge_queue(self):
-        pass
 
 
 class QueueCommunication:
-    def __init__(self, config, host):
+    def __init__(self, config, host, queue_name, exchange, routing_key):
         self.host = host
         self.port = config["port"]
         self.user = config["user"]
         self.password = config["password"]
-        self.queue_name = config["queue_name"]
-        self.exchange = config["exchange"]
-        self.routing_key = config["routing_key"]
+        self.queue_name = queue_name
+        self.exchange = exchange
+        self.routing_key = routing_key
     
     def send_data(self, data):
         credentials = pika.PlainCredentials(self.user, self.password)
@@ -107,16 +118,5 @@ class QueueCommunication:
 
         connection.close()
         return body
-    
-    def purge_queue(self):
-        credentials = pika.PlainCredentials(self.user, self.password)
-        connection = pika.BlockingConnection(pika.ConnectionParameters(
-            host=self.host,
-            port=self.port,
-            credentials=credentials
-        ))
-        channel = connection.channel()
-        channel.queue_purge(queue=self.queue_name)
-        connection.close()
 
 
