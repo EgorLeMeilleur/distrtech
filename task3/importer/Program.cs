@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
-
-var grpcConfig = builder.Configuration.GetSection("GrpcServer");
+var grpcConfig = builder.Configuration.GetSection("Server");
 var grpcHost = grpcConfig["Host"] ?? "0.0.0.0";
 var grpcPort = int.Parse(grpcConfig["Port"] ?? "5002");
 
@@ -27,7 +26,7 @@ builder.WebHost.ConfigureKestrel(options =>
 builder.Services.AddGrpc();
 builder.Services.AddLogging();
 
-var pgConfig = builder.Configuration.GetSection("Database:Postgres");
+var pgConfig = builder.Configuration.GetSection("Postgres");
 var connectionString = $"Host={pgConfig["Host"]};Port={pgConfig["Port"]};Username={pgConfig["User"]};Password={pgConfig["Password"]};Database={pgConfig["Database"]}";
 builder.Services.AddTransient(_ => new NpgsqlConnection(connectionString));
 
