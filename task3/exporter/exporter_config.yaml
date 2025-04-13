@@ -3,8 +3,8 @@ exporter:
   sqlite_db_path: "music_data.db"
 
 importer:
-  host: "localhost"
-  port: 50051
+  host: "192.168.100.3"
+  port: 5000
 
 security:
   ca_cert: "../certificates/ca.pem"

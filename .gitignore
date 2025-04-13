@@ -1,4 +1,5 @@
 venv/
+venv9/
 *.db
 *.sln
 *bin/
@@ -7,5 +8,3 @@ venv/
 **/__pycache__/
 *.env
 *.enc
-*.key
-*.pem

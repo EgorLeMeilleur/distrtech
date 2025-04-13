@@ -1,8 +1,8 @@
 
 {
     "Server": {
-      "Host": "0.0.0.0",
-      "Port": 50051
+      "Host": "192.168.100.3",
+      "Port": 5000
     },
     "Database": {
       "Postgres": {
