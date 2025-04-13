@@ -1,7 +1,7 @@
 
 {
     "Server": {
-      "Host": "192.168.100.3",
+      "Host": "192.168.100.10",
       "Port": 5002
     },
     "Database": {
@@ -14,8 +14,8 @@
       }
     },
     "Security": {
-      "ServerCert": "../certificates/server.pem",
-      "ServerKey": "../certificates/server.key",
-      "CaCert": "../certificates/ca.pem"
+      "ServerCert": "server.crt",
+      "ServerKey": "server.key",
+      "CaCert": "ca.crt"
     }
   }
