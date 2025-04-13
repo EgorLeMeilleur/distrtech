@@ -53,7 +53,7 @@ namespace Consumer.Services
 
         private void InsertNormalizedData(string groupName, string musicianName, string instrumentName, string labelName)
         {
-            var pgConfig = _configuration.GetSection("Database:Postgres");
+            var pgConfig = _configuration.GetSection("Postgres");
 
             using (var conn = new NpgsqlConnection(
                 $"Host={pgConfig["Host"]};Port={pgConfig["Port"]};Username={pgConfig["User"]};Password={pgConfig["Password"]};Database=postgres"))

@@ -27,6 +27,7 @@ builder.Services.AddGrpc();
 builder.Services.AddLogging();
 
 var pgConfig = builder.Configuration.GetSection("Postgres");
+Console.WriteLine($"Connecting to {pgConfig["Host"]}:{pgConfig["Port"]}");
 var connectionString = $"Host={pgConfig["Host"]};Port={pgConfig["Port"]};Username={pgConfig["User"]};Password={pgConfig["Password"]};Database={pgConfig["Database"]}";
 builder.Services.AddTransient(_ => new NpgsqlConnection(connectionString));
 
