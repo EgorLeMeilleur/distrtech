@@ -14,8 +14,8 @@
       }
     },
     "Security": {
-      "ServerCert": "../certificates/server.pem",
+      "ServerCert": "../certificates/server.pfx",
       "ServerKey": "../certificates/server.key",
-      "CaCert": "../certificates/ca.pem"
+      "CaCert": "../certificates/ca.crt"
     }
   }
