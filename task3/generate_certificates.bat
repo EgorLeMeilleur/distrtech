@@ -1,15 +1,20 @@
 @echo off
 
-if not exist certificates mkdir certificates
-cd certificates
+openssl genrsa -out ca.key 2048
+openssl req -new -x509 -days 365 -key ca.key -out ca.crt -subj "/CN=My Local CA"
 
-openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout ca.key -out ca.pem -subj "/CN=Certificate-Authority"
-openssl req -newkey rsa:4096 -nodes -keyout server.key -out server.csr -subj "/CN=importer-service"
-openssl req -newkey rsa:4096 -nodes -keyout client.key -out client.csr -subj "/CN=exporter-service"
-openssl x509 -req -in server.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out server.pem -days 365
-openssl x509 -req -in client.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out client.pem -days 365
+openssl genrsa -out server.key 2048
+openssl req -new -key server.key -out server.csr -subj "/CN=192.168.100.10" -addext "subjectAltName=IP:192.168.100.10"
 
+echo subjectAltName=IP:192.168.100.10 > extensions.cnf
+
+openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -extfile extensions.cnf
+
+openssl pkcs12 -export -out server.pfx -inkey server.key -in server.crt -certfile ca.crt -password pass:yourpassword
+
+del extensions.cnf
 del server.csr
-del client.csr
+del ca.srl
 
-echo SSL certificates generated successfully
+echo Certificates generated successfully!
+pause
