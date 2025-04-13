@@ -1,8 +1,8 @@
 
 {
     "Server": {
-      "Host": "192.168.100.10",
-      "Port": 50051
+      "Host": "192.168.100.3",
+      "Port": 5002
     },
     "Database": {
       "Postgres": {
@@ -14,8 +14,8 @@
       }
     },
     "Security": {
-      "ServerCert": "../certificates/server.pfx",
+      "ServerCert": "../certificates/server.pem",
       "ServerKey": "../certificates/server.key",
-      "CaCert": "../certificates/ca.crt"
+      "CaCert": "../certificates/ca.pem"
     }
   }

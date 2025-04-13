@@ -1,20 +1,12 @@
-@echo off
+#!/bin/bash
 
-openssl genrsa -out ca.key 2048
-openssl req -new -x509 -days 365 -key ca.key -out ca.crt -subj "/CN=My Local CA"
+openssl req -x509 -newkey rsa:4096 -days 365 -nodes -keyout ca.key -out ca.pem -subj "/CN=Certificate-Authority"
+openssl req -newkey rsa:4096 -nodes -keyout server.key -out server.csr -subj "/CN=192.168.100.3"
+openssl req -newkey rsa:4096 -nodes -keyout client.key -out client.csr -subj "/CN=192.168.100.3"
 
-openssl genrsa -out server.key 2048
-openssl req -new -key server.key -out server.csr -subj "/CN=192.168.100.10" -addext "subjectAltName=IP:192.168.100.10"
+openssl x509 -req -in server.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out server.pem -days 365
+openssl x509 -req -in client.csr -CA ca.pem -CAkey ca.key -CAcreateserial -out client.pem -days 365
 
-echo subjectAltName=IP:192.168.100.10 > extensions.cnf
+rm server.csr client.csr
 
-openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -extfile extensions.cnf
-
-openssl pkcs12 -export -out server.pfx -inkey server.key -in server.crt -certfile ca.crt -password pass:yourpassword
-
-del extensions.cnf
-del server.csr
-del ca.srl
-
-echo Certificates generated successfully!
-pause
+echo "SSL certificates generated successfully"
