@@ -7,7 +7,7 @@
     "Database": {
       "Postgres": {
         "Host": "localhost",
-        "Port": 5433,
+        "Port": 5432,
         "Database": "music_db",
         "User": "postgres",
         "Password": "postgres"

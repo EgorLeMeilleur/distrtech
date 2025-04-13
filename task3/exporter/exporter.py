@@ -1,6 +1,6 @@
 import time
 import logging
-from grpc import GRPCDataImporterClient
+from grpc_client import GRPCDataImporterClient
 from db_work import initialize_sqlite_db, get_music_data
 import os
 import yaml
