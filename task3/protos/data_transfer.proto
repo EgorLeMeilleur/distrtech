@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package datatransfer;
+
+service DataImporter {
+  // Import a single music data record
+  rpc ImportMusicData (MusicDataRequest) returns (ImportResponse);
+}
+
+message MusicDataRequest {
+  string group_name = 1;
+  string musician_name = 2;
+  string instrument_name = 3;
+  string label_name = 4;
+}
+
+message ImportResponse {
+  bool success = 1;
+  string message = 2;
+}

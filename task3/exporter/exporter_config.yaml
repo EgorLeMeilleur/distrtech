@@ -1,0 +1,12 @@
+
+exporter:
+  sqlite_db_path: "music_data.db"
+
+importer:
+  host: "localhost"
+  port: 50051
+
+security:
+  ca_cert: "../certificates/ca.pem"
+  client_cert: "../certificates/client.pem"
+  client_key: "../certificates/client.key"

@@ -1,0 +1,21 @@
+
+{
+    "Server": {
+      "Host": "0.0.0.0",
+      "Port": 50051
+    },
+    "Database": {
+      "Postgres": {
+        "Host": "localhost",
+        "Port": 5433,
+        "Database": "music_db",
+        "User": "postgres",
+        "Password": "postgres"
+      }
+    },
+    "Security": {
+      "ServerCert": "../certificates/server.pem",
+      "ServerKey": "../certificates/server.key",
+      "CaCert": "../certificates/ca.pem"
+    }
+  }
