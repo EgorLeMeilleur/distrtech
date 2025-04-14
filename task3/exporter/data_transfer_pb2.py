@@ -14,7 +14,7 @@ _sym_db = _symbol_database.Default()
 
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x64\x61ta_transfer.proto\x12\x0c\x64\x61tatransfer\"j\n\x10MusicDataRequest\x12\x12\n\ngroup_name\x18\x01 \x01(\t\x12\x15\n\rmusician_name\x18\x02 \x01(\t\x12\x17\n\x0finstrument_name\x18\x03 \x01(\t\x12\x12\n\nlabel_name\x18\x04 \x01(\t\"2\n\x0eImportResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2_\n\x0c\x44\x61taImporter\x12O\n\x0fImportMusicData\x12\x1e.datatransfer.MusicDataRequest\x1a\x1c.datatransfer.ImportResponseb\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x13\x64\x61ta_transfer.proto\x12\x0c\x64\x61tatransfer\"j\n\x10MusicDataRequest\x12\x12\n\ngroup_name\x18\x01 \x01(\t\x12\x15\n\rmusician_name\x18\x02 \x01(\t\x12\x17\n\x0finstrument_name\x18\x03 \x01(\t\x12\x12\n\nlabel_name\x18\x04 \x01(\t\"2\n\x0eImportResponse\x12\x0f\n\x07success\x18\x01 \x01(\x08\x12\x0f\n\x07message\x18\x02 \x01(\t2a\n\x0c\x44\x61taImporter\x12Q\n\x0fImportMusicData\x12\x1e.datatransfer.MusicDataRequest\x1a\x1c.datatransfer.ImportResponse(\x01\x62\x06proto3')
 
 
 
@@ -43,5 +43,5 @@ if _descriptor._USE_C_DESCRIPTORS == False:
   _IMPORTRESPONSE._serialized_start=145
   _IMPORTRESPONSE._serialized_end=195
   _DATAIMPORTER._serialized_start=197
-  _DATAIMPORTER._serialized_end=292
+  _DATAIMPORTER._serialized_end=294
 # @@protoc_insertion_point(module_scope)

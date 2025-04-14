@@ -1,10 +1,6 @@
-using System;
-using System.Threading.Tasks;
 using Grpc.Core;
 using Npgsql;
 using Datatransfer;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 
 namespace Importer.Services
 {
@@ -19,7 +15,7 @@ namespace Importer.Services
             _configuration = configuration;
         }
 
-        public override Task<ImportResponse> ImportMusicData(MusicDataRequest request, ServerCallContext context)
+        public Task<ImportResponse> ImportMusicData(MusicDataRequest request, ServerCallContext context)
         {
             Console.WriteLine($"Получены данные: {request.GroupName} - {request.MusicianName} - {request.InstrumentName} - {request.LabelName}");
 

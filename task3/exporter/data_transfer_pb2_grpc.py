@@ -14,7 +14,7 @@ class DataImporterStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.ImportMusicData = channel.unary_unary(
+        self.ImportMusicData = channel.stream_unary(
                 '/datatransfer.DataImporter/ImportMusicData',
                 request_serializer=data__transfer__pb2.MusicDataRequest.SerializeToString,
                 response_deserializer=data__transfer__pb2.ImportResponse.FromString,
@@ -24,9 +24,8 @@ class DataImporterStub(object):
 class DataImporterServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def ImportMusicData(self, request, context):
-        """Import a single music data record
-        """
+    def ImportMusicData(self, request_iterator, context):
+        """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
@@ -34,7 +33,7 @@ class DataImporterServicer(object):
 
 def add_DataImporterServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'ImportMusicData': grpc.unary_unary_rpc_method_handler(
+            'ImportMusicData': grpc.stream_unary_rpc_method_handler(
                     servicer.ImportMusicData,
                     request_deserializer=data__transfer__pb2.MusicDataRequest.FromString,
                     response_serializer=data__transfer__pb2.ImportResponse.SerializeToString,
@@ -50,7 +49,7 @@ class DataImporter(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def ImportMusicData(request,
+    def ImportMusicData(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -60,7 +59,7 @@ class DataImporter(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/datatransfer.DataImporter/ImportMusicData',
+        return grpc.experimental.stream_unary(request_iterator, target, '/datatransfer.DataImporter/ImportMusicData',
             data__transfer__pb2.MusicDataRequest.SerializeToString,
             data__transfer__pb2.ImportResponse.FromString,
             options, channel_credentials,
