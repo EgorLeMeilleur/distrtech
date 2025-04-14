@@ -29,22 +29,22 @@ namespace Importer.Services
                         request.InstrumentName,
                         request.LabelName
                     );
-                    Console.WriteLine($"Импортированые данные: {request.MusicianName}, {request.GroupName}");
+                    Console.WriteLine($"Импортированые данные: {request.GroupName}, {request.MusicianName}, {request.InstrumentName}, {request.LabelName}.");
                 }
 
                 return new ImportResponse
                 {
                     Success = true,
-                    Message = "Данные импортированы успешно"
+                    Message = "Данные импортированы успешно."
                 };
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Не удалось импортировать данные: {ex.Message}");
+                Console.WriteLine($"Не удалось импортировать данные: {ex.Message}.");
                 return new ImportResponse
                 {
                     Success = false,
-                    Message = $"Не удалось импортировать данные: {ex.Message}"
+                    Message = $"Не удалось импортировать данные: {ex.Message}."
                 };
             }
         }
@@ -200,8 +200,6 @@ namespace Importer.Services
                     }
                 }
             }
-
-            Console.WriteLine($"Успешно нормализованы и добавлены данные для {musicianName}");
         }
     }
 }

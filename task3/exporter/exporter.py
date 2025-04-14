@@ -21,7 +21,7 @@ def main():
     initialize_sqlite_db(sqlite_db)
     
     data = get_music_data(sqlite_db)
-    print(f"Найдено {len(data)} записей для экспорта")
+    print(f"Найдено {len(data)} записей для экспорта.")
     
     grpc_config = config['importer']
     client = GRPCDataImporterClient(
@@ -37,11 +37,11 @@ def main():
         transactions.append(message)
 
     success, message = client.import_music_data(transactions)
+    print(message)
     if success:
-        print(message)
-        print("Процесс экспорта завершен")
+        print("Процесс экспорта завершен.")
     else:
-        print(f"Ошибка при экспорте")
+        print(f"Ошибка при экспорте.")
 
     client.close()
 
