@@ -3,8 +3,7 @@ syntax = "proto3";
 package datatransfer;
 
 service DataImporter {
-  // Import a single music data record
-  rpc ImportMusicData (MusicDataRequest) returns (ImportResponse);
+  rpc ImportMusicData (stream MusicDataRequest) returns (ImportResponse);
 }
 
 message MusicDataRequest {

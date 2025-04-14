@@ -6,24 +6,22 @@ using Datatransfer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Consumer.Services
+namespace Importer.Services
 {
     internal class MusicDataImporterService : DataImporter.DataImporterBase
     {
         private readonly NpgsqlConnection _connection;
-        private readonly ILogger<MusicDataImporterService> _logger;
         private readonly IConfiguration _configuration;
 
-        public MusicDataImporterService(NpgsqlConnection connection, ILogger<MusicDataImporterService> logger, IConfiguration configuration)
+        public MusicDataImporterService(NpgsqlConnection connection, IConfiguration configuration)
         {
             _connection = connection;
-            _logger = logger;
             _configuration = configuration;
         }
 
         public override Task<ImportResponse> ImportMusicData(MusicDataRequest request, ServerCallContext context)
         {
-            _logger.LogInformation($"Received data: {request.GroupName} - {request.MusicianName} - {request.InstrumentName} - {request.LabelName}");
+            Console.WriteLine($"Получены данные: {request.GroupName} - {request.MusicianName} - {request.InstrumentName} - {request.LabelName}");
 
             try
             {
@@ -37,16 +35,16 @@ namespace Consumer.Services
                 return Task.FromResult(new ImportResponse
                 {
                     Success = true,
-                    Message = $"Successfully imported data for {request.MusicianName} from {request.GroupName}"
+                    Message = $"Успешно импортированы данные для {request.MusicianName} из {request.GroupName}"
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Error importing data: {ex.Message}");
+                Console.WriteLine($"Ошибка при импорте данных: {ex.Message}");
                 return Task.FromResult(new ImportResponse
                 {
                     Success = false,
-                    Message = $"Failed to import data: {ex.Message}"
+                    Message = $"Не удалось импортировать данные: {ex.Message}"
                 });
             }
         }
@@ -67,7 +65,7 @@ namespace Consumer.Services
                         using (var createDbCmd = new NpgsqlCommand($"CREATE DATABASE \"{pgConfig["Database"]}\"", conn))
                         {
                             createDbCmd.ExecuteNonQuery();
-                            _logger.LogInformation($"Created database {pgConfig["Database"]}");
+                            Console.WriteLine($"Создана база данных {pgConfig["Database"]}");
                         }
                     }
                 }
@@ -202,7 +200,7 @@ namespace Consumer.Services
                 }
             }
 
-            _logger.LogInformation($"Successfully normalized and inserted data for {musicianName}");
+            Console.WriteLine($"Успешно нормализованы и добавлены данные для {musicianName}");
         }
     }
 }

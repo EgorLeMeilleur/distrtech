@@ -17,7 +17,7 @@ def main():
     initialize_sqlite_db(sqlite_db)
     
     data = get_music_data(sqlite_db)
-    logging.info(f"Found {len(data)} records to export")
+    print(f"Найдено {len(data)} записей для экспорта")
     
     grpc_config = config['importer']
     client = GRPCDataImporterClient(
@@ -25,18 +25,23 @@ def main():
         grpc_config['port'],
         config['security']['ca_cert']
     )
+
+    group_names, musician_names, instrument_names, label_names = [], [], [], []
+
     
     for record in data:
         group_name, musician_name, instrument_name, label_name = record
-        success, message = client.import_music_data(group_name, musician_name, instrument_name, label_name)
-        if success:
-            logging.info(f"Exported: {group_name} - {musician_name} - {instrument_name} - {label_name}")
-            logging.info(f"Response: {message}")
-        else:
-            logging.error(f"Failed to export: {group_name} - {musician_name}")
-        time.sleep(0.1)
+        group_names.append(group_name)
+        musician_names.append(musician_name)
+        instrument_names.append(instrument_name)
+        label_names.append(label_name)
 
-    logging.info("Export process completed")
+    success, message = client.import_music_data(group_name, musician_name, instrument_name, label_name)
+    if success:
+        print("Процесс экспорта завершен")
+    else:
+        print(f"Ошибка при экспорте")
+
     client.close()
 
 if __name__ == "__main__":

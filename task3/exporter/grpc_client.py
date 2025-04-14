@@ -25,6 +25,7 @@ class GRPCDataImporterClient:
             logging.error(f"Error exporting data: {e}")
             return False, str(e)
 
+
     def close(self):
         if self.channel:
             self.channel.close()
