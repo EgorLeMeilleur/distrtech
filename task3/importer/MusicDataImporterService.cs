@@ -15,35 +15,40 @@ namespace Importer.Services
             _configuration = configuration;
         }
 
-        public Task<ImportResponse> ImportMusicData(MusicDataRequest request, ServerCallContext context)
+        public override async Task<ImportResponse> ImportMusicData(IAsyncStreamReader<MusicDataRequest> requestStream, ServerCallContext context)
         {
-            Console.WriteLine($"Получены данные: {request.GroupName} - {request.MusicianName} - {request.InstrumentName} - {request.LabelName}");
-
             try
             {
-                InsertNormalizedData(
-                    request.GroupName,
-                    request.MusicianName,
-                    request.InstrumentName,
-                    request.LabelName
-                );
+                while (await requestStream.MoveNext())
+                {
+                    var request = requestStream.Current;
 
-                return Task.FromResult(new ImportResponse
+                    InsertNormalizedData(
+                        request.GroupName,
+                        request.MusicianName,
+                        request.InstrumentName,
+                        request.LabelName
+                    );
+                    Console.WriteLine($"Импортированые данные: {request.MusicianName}, {request.GroupName}");
+                }
+
+                return new ImportResponse
                 {
                     Success = true,
-                    Message = $"Успешно импортированы данные для {request.MusicianName} из {request.GroupName}"
-                });
+                    Message = "Данные импортированы успешно"
+                };
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Ошибка при импорте данных: {ex.Message}");
-                return Task.FromResult(new ImportResponse
+                Console.WriteLine($"Не удалось импортировать данные: {ex.Message}");
+                return new ImportResponse
                 {
                     Success = false,
                     Message = $"Не удалось импортировать данные: {ex.Message}"
-                });
+                };
             }
         }
+
 
         private void InsertNormalizedData(string groupName, string musicianName, string instrumentName, string labelName)
         {

@@ -38,6 +38,7 @@ def main():
 
     success, message = client.import_music_data(transactions)
     if success:
+        print(message)
         print("Процесс экспорта завершен")
     else:
         print(f"Ошибка при экспорте")
