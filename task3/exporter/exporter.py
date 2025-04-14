@@ -27,7 +27,6 @@ def main():
     )
 
     group_names, musician_names, instrument_names, label_names = [], [], [], []
-
     
     for record in data:
         group_name, musician_name, instrument_name, label_name = record
