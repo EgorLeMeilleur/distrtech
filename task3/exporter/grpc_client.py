@@ -1,5 +1,4 @@
 import grpc
-import logging
 import data_transfer_pb2
 import data_transfer_pb2_grpc
 
@@ -11,19 +10,18 @@ class GRPCDataImporterClient:
         self.channel = grpc.secure_channel(f"{host}:{port}", credentials)
         self.stub = data_transfer_pb2_grpc.DataImporterStub(self.channel)
 
-    def import_music_data(self, group_name, musician_name, instrument_name, label_name):
-        request = data_transfer_pb2.MusicDataRequest(
-            group_name=group_name,
-            musician_name=musician_name,
-            instrument_name=instrument_name,
-            label_name=label_name
-        )
-        try:
-            response = self.stub.ImportMusicData(request)
-            return True, response.message
-        except Exception as e:
-            logging.error(f"Error exporting data: {e}")
-            return False, str(e)
+    def import_music_data(self, transactions):
+        def request_iterator():
+            for transaction_data in transactions:
+                yield data_transfer_pb2.MusicDataRequest(
+                    group_name=transaction_data['group_name'],
+                    musician_name=transaction_data['musician_name'],
+                    instrument_name=transaction_data['instrument_name'],
+                    label_name=transaction_data['label_name']
+                )
+        
+        response = self.stub.ImportMusicData(request_iterator())
+        return response.success, response.message
 
 
     def close(self):
