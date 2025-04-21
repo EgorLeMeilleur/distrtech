@@ -4,9 +4,9 @@ openssl genrsa -out ca.key 2048
 openssl req -new -x509 -days 365 -key ca.key -out ca.crt -subj "/CN=My Local CA"
 
 openssl genrsa -out server.key 2048
-openssl req -new -key server.key -out server.csr -subj "/CN=192.168.56.1" -addext "subjectAltName=IP:192.168.56.1"
+openssl req -new -key server.key -out server.csr -subj "/CN=172.20.10.7" -addext "subjectAltName=IP:172.20.10.7"
 
-echo subjectAltName=IP:192.168.56.1 > extensions.cnf
+echo subjectAltName=IP:172.20.10.7 > extensions.cnf
 
 openssl x509 -req -in server.csr -CA ca.crt -CAkey ca.key -CAcreateserial -out server.crt -days 365 -extfile extensions.cnf
 
