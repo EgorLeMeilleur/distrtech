@@ -1,37 +1,61 @@
-import os
 import pika
-import json
-from services.config import RABBIT_ADDR, RABBIT_PORT
+import time
+from services.config import RABBIT_ADDR, RABBIT_PORT, RABBIT_USER, RABBIT_PASS
+    
+class QueueCommunication:
+    def __init__(self, queue_name):
+        self.host = RABBIT_ADDR
+        self.port = RABBIT_PORT
+        self.user = RABBIT_USER
+        self.password = RABBIT_PASS
+        self.queue_name = queue_name
+        self.queue_name = queue_name
+        self.exchange = 'key_exchange'
+        self.routing_key = 'key_key'
+    
+    def send_data(self, data):
+        credentials = pika.PlainCredentials(self.user, self.password)
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host=self.host,
+            port=self.port,
+            credentials=credentials
+        ))
+        channel = connection.channel()
+        
+        channel.exchange_declare(exchange=self.exchange, exchange_type='direct')
+        channel.queue_declare(queue=self.queue_name)
+        channel.queue_bind(queue=self.queue_name, exchange=self.exchange, routing_key=self.routing_key)
+        
+        channel.basic_publish(
+            exchange=self.exchange,
+            routing_key=self.routing_key,
+            body=data
+        )
+        
+        connection.close()
 
-# RABBIT_URL = 
+    def receive_data(self, timeout=10):
+        credentials = pika.PlainCredentials(self.user, self.password)
+        connection = pika.BlockingConnection(pika.ConnectionParameters(
+            host=self.host,
+            port=self.port,
+            credentials=credentials
+        ))
+        channel = connection.channel()
 
-def create_queue(queue_name: str):
-    conn = pika.BlockingConnection(pika.URLParameters(RABBIT_URL))
-    ch = conn.channel()
-    ch.queue_declare(queue=queue_name, durable=True)
-    conn.close()
+        channel.exchange_declare(exchange=self.exchange, exchange_type='direct')
+        channel.queue_declare(queue=self.queue_name)
+        channel.queue_bind(queue=self.queue_name, exchange=self.exchange, routing_key=self.routing_key)
 
-def send_rabbit(queue_name: str, message: dict):
-    conn = pika.BlockingConnection(pika.URLParameters(RABBIT_URL))
-    ch = conn.channel()
-    ch.basic_publish(
-        exchange="",
-        routing_key=queue_name,
-        body=json.dumps(message).encode("utf-8"),
-        properties=pika.BasicProperties(delivery_mode=2)
-    )
-    conn.close()
+        start_time = time.time()
+        body = None
 
-def recv_rabbit(queue_name: str, callback):
-    conn = pika.BlockingConnection(pika.URLParameters(RABBIT_URL))
-    ch = conn.channel()
-    ch.basic_qos(prefetch_count=1)
-    ch.queue_declare(queue=queue_name, durable=True)
+        while time.time() - start_time < timeout:
+            method_frame, header_frame, body = channel.basic_get(queue=self.queue_name)
+            if method_frame:
+                channel.basic_ack(method_frame.delivery_tag)
+                break
+            time.sleep(0.5)
 
-    def _on_message(ch, method, properties, body):
-        data = json.loads(body.decode("utf-8"))
-        callback(data)
-        ch.basic_ack(delivery_tag=method.delivery_tag)
-
-    ch.basic_consume(queue=queue_name, on_message_callback=_on_message)
-    ch.start_consuming()
+        connection.close()
+        return body

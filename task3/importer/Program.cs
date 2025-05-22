@@ -17,8 +17,7 @@ builder.WebHost.ConfigureKestrel(options =>
         listenOptions.UseHttps(httpsOptions =>
         {
             httpsOptions.ServerCertificate = new X509Certificate2("server.pfx", "password");
-            httpsOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 |
-                                          System.Security.Authentication.SslProtocols.Tls13;
+            httpsOptions.SslProtocols = System.Security.Authentication.SslProtocols.Tls12 | System.Security.Authentication.SslProtocols.Tls13;
         });
     });
 });

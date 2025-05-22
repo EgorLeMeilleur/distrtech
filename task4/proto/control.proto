@@ -1,0 +1,28 @@
+syntax = "proto3";
+
+package control;
+
+message Range {
+  double min = 1;
+  double max = 2;
+}
+
+message Empty {
+  string message = 1;
+}
+
+service TempControl {
+  rpc SetRange(Range) returns (Empty);
+}
+
+service HumidityControl {
+  rpc SetRange(Range) returns (Empty);
+}
+
+service VideoControl {
+  rpc ApplyFilter(FilterRequest) returns (Empty);
+}
+
+message FilterRequest {
+  string filter_type = 1;
+}
