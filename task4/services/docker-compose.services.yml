@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  consul:
+    image: consul:1.15.4
+    volumes:
+      - ./consul-config.json:/consul/config/agent.json
+    ports: 
+      - "8500:8500"
+
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  database:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: analytics
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports: 
+      - "5432:5432"

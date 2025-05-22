@@ -1,0 +1,5 @@
+request
+pika
+grpcio 
+grpcio-tools
+psycopg2-binary
