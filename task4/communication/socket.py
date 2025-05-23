@@ -5,6 +5,11 @@ def find_free_port():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.bind(('', 0))
         return s.getsockname()[1]
+    
+def get_ip_in_network():
+    with socket.socket(socket.AF_INET, socket.SOCK_DGRAM) as s:
+        s.connect(("8.8.8.8", 80))
+        return s.getsockname()[0]
 
 class SocketCommunication:
     def __init__(self, host: str, port: int, buffer_size: int = 4096, timeout: float = 10.0):

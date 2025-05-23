@@ -11,7 +11,7 @@ from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
 from communication.consul import register_service, discover_service, deregister_service
-from communication.socket import find_free_port, SocketCommunication
+from communication.socket import find_free_port, SocketCommunication, get_ip_in_network
 
 from proto.control_pb2_grpc import VideoControlServicer, add_VideoControlServicer_to_server
 from proto.control_pb2 import Empty
@@ -46,7 +46,7 @@ def grpc_server_loop(host, port):
     server.wait_for_termination()
 
 def main():
-    host = socket.gethostbyname(socket.gethostname())
+    host = get_ip_in_network()
     grpc_port = find_free_port()
     service_id = f"{SERVICE_NAME}_{grpc_port}"
 

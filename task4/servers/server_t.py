@@ -1,5 +1,4 @@
 import json
-import socket
 import time
 import grpc
 import backoff
@@ -12,7 +11,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 from communication.consul import register_service, discover_service, deregister_service
 from communication.rabbitmq import QueueCommunication
 from communication.named_pipe import get_aggregator_pipe
-from communication.socket import find_free_port
+from communication.socket import find_free_port, get_ip_in_network
 
 from proto.control_pb2_grpc import TempControlStub
 from proto.control_pb2 import Range
@@ -107,7 +106,7 @@ def resilient_rabbit_connect() -> QueueCommunication:
 
 
 def main():
-    host = socket.gethostbyname(socket.gethostname())
+    host = get_ip_in_network()
     port = find_free_port()
     service_id = f"{SERVICE_NAME}_{port}"
 

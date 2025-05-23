@@ -1,9 +1,6 @@
-# servers/aggregator.py
-
 import os
 import json
 import time
-import socket
 import requests
 import psycopg2
 import backoff
@@ -16,7 +13,7 @@ import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
 
-from communication.socket import find_free_port
+from communication.socket import find_free_port, get_ip_in_network
 from services.config import (
     POSTGRES_ADDR, POSTGRES_PORT, POSTGRES_USER,
     POSTGRES_PASS, POSTGRES_DB, CONSUL_ADDR, CONSUL_PORT
@@ -57,12 +54,8 @@ def deregister_from_consul(service_id):
     except Exception as e:
         print(f"Consul deregistration failed: {e}")
 
-# -------------------------
-# Прочитать FIFO неконкурентно в потоке
-# -------------------------
-
 def reader_thread(pipe_paths, queues, stop_event):
-    # Открываем все FIFO на чтение в неблокирующем режиме
+
     fds = {}
     for key, path in pipe_paths.items():
         if key == 'base': continue
@@ -81,30 +74,24 @@ def reader_thread(pipe_paths, queues, stop_event):
                     except Exception as e:
                         print(f"Failed parse JSON from {key}: {e}")
             except BlockingIOError:
-                # ничего не прочитано
                 pass
             except Exception as e:
                 print(f"Error reading FIFO {key}: {e}")
         time.sleep(READ_INTERVAL)
 
-# -------------------------
-# Основной процесс агрегации
-# -------------------------
-
 def main():
-    host = socket.gethostbyname(socket.gethostname())
+    host = get_ip_in_network()
     port = find_free_port()
     service_id = f"{SERVICE_NAME}_{port}"
     instance_dir = os.path.join(PIPE_BASE, service_id)
 
-    # пути
     pipe_paths = {
         'base':       instance_dir,
         'pipe_temp':  os.path.join(instance_dir, 'pipe_temp'),
         'pipe_humid': os.path.join(instance_dir, 'pipe_humid'),
         'pipe_video': os.path.join(instance_dir, 'pipe_video'),
     }
-    # создать папку и FIFO
+
     Path(pipe_paths['base']).mkdir(parents=True, exist_ok=True)
     for key, path in pipe_paths.items():
         if key == 'base': continue
@@ -112,11 +99,9 @@ def main():
             os.mkfifo(path)
             print(f"Created FIFO: {path}")
 
-    # Метаданные для Consul
     meta = {k: v for k, v in pipe_paths.items() if k != 'base'}
     start_consul_registration(service_id, host, port, meta)
 
-    # подключение к БД
     try:
         conn = psycopg2.connect(
             dbname=POSTGRES_DB, user=POSTGRES_USER,
@@ -139,11 +124,9 @@ def main():
         deregister_from_consul(service_id)
         return
 
-    # in-memory очереди
     queues = {k: deque() for k in ('pipe_temp','pipe_humid','pipe_video')}
     stop_event = threading.Event()
 
-    # старт reader thread
     t_reader = threading.Thread(
         target=reader_thread,
         args=(pipe_paths, queues, stop_event),
@@ -159,13 +142,10 @@ def main():
             now = time.time()
             if now - last_agg >= AGG_INTERVAL:
                 last_agg = now
-                # собрать по одному из каждой
                 vals = [queues[key].popleft() if queues[key] else None
                         for key in ('pipe_temp','pipe_humid','pipe_video')]
-                # рассчитать result
                 non_null = [v for v in vals if v is not None]
                 result = sum(non_null)/len(non_null) if non_null else None
-                # записать в БД
                 cur.execute(
                     "INSERT INTO readings(result, ts, temp, humid, video) VALUES (%s,%s,%s,%s,%s)",
                     (result, datetime.utcnow(), vals[0], vals[1], vals[2])

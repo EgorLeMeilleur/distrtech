@@ -14,7 +14,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from communication.consul import register_service, deregister_service
 from communication.rabbitmq import QueueCommunication
-from communication.socket import find_free_port
+from communication.socket import find_free_port, get_ip_in_network
 
 from proto.control_pb2_grpc import HumidityControlServicer, add_HumidityControlServicer_to_server
 from proto.control_pb2 import Empty
@@ -59,7 +59,7 @@ def grpc_server_loop(host, port):
             time.sleep(5)
 
 def main():
-    host = socket.gethostbyname(socket.gethostname())
+    host = get_ip_in_network()
     grpc_port = find_free_port()
     service_id = f'{SERVICE_NAME}_{grpc_port}'
 
