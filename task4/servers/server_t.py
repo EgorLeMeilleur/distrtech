@@ -3,6 +3,7 @@ import socket
 import time
 import grpc
 import backoff
+import os
 
 import sys
 from pathlib import Path
@@ -10,7 +11,7 @@ sys.path.append(str(Path(__file__).parent.parent))
 
 from communication.consul import register_service, discover_service, deregister_service
 from communication.rabbitmq import QueueCommunication
-from communication.named_pipe import send_pipe
+from communication.named_pipe import get_aggregator_pipe
 from communication.socket import find_free_port
 
 from proto.control_pb2_grpc import TempControlStub
@@ -29,12 +30,28 @@ def handle_message(body: bytes, flag_ok: bool) -> bool:
         ts = data['ts']
         print(f"Received temp={t:.2f} at ts={ts}")
 
-        if t > 33:
+        data = json.loads(body.decode())
+        t = data['value']
+        ts = data['ts']
+        print(f"Received hum={t:.2f} at ts={ts}")
+
+        msg = {'type': 'humid', 'value': t, 'ts': ts}
+        pipes = get_aggregator_pipe('pipe_humid')
+        if pipes:
             try:
-                send_pipe(PIPE_NAME, {'type': 'temp', 'value': 1.5 * t + 4, 'ts': ts})
-                print(f"Wrote to pipe '{PIPE_NAME}'")
+                for pipe in pipes:
+                    payload = json.dumps(msg).encode("utf-8")
+                    flags   = os.O_WRONLY | os.O_NONBLOCK
+                    fd = os.open(pipe, flags)
+                    os.write(fd, payload)
+                    os.close(fd)
+                    print(f"Sent to aggregator via FIFO {pipe}: {msg}")
             except Exception as e:
-                print(f"Failed to write to pipe: {e}")
+                print(f"Failed to write to FIFO {pipe}: {e}")
+        else:
+            print("Aggregator pipe not available, skipping send")
+
+        if t > 33:
 
             if flag_ok:
                 flag_ok = False
@@ -53,11 +70,6 @@ def handle_message(body: bytes, flag_ok: bool) -> bool:
                     print(f"Consul discovery failed: {e}")
 
         else:
-            try:
-                send_pipe(PIPE_NAME, {'type': 'temp', 'value': 2 * t + 5, 'ts': ts})
-                print(f"Wrote to pipe '{PIPE_NAME}'")
-            except Exception as e:
-                print(f"Failed to write to pipe: {e}")
 
             if not flag_ok:
                 flag_ok = True
