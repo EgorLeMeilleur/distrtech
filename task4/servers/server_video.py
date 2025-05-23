@@ -43,7 +43,7 @@ def handle_frame_data(data: bytes):
         if pipes:
             try:
                 for pipe in pipes:
-                    payload = json.dumps(msg).encode("utf-8")
+                    payload = (json.dumps(msg) + "\n").encode("utf-8")
                     flags   = os.O_WRONLY | os.O_NONBLOCK
                     fd = os.open(pipe, flags)
                     os.write(fd, payload)

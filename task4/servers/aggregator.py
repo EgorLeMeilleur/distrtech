@@ -66,21 +66,56 @@ def deregister_from_consul(service_id):
     except Exception as e:
         print(f"Consul deregistration failed: {e}")
 
-def reader_thread(pipe_paths, queues, stop_event):
+# def reader_thread(pipe_paths, queues, stop_event):
+#     fds = {}
+#     for key, path in pipe_paths.items():
+#         if key == 'base': continue
+#         fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
+#         fds[key] = fd
 
+#     while not stop_event.is_set():
+#         for key, fd in fds.items():
+#             try:
+#                 raw = os.read(fd, 4096)
+#                 if raw:
+#                     try:
+#                         msg = json.loads(raw.decode('utf-8'))
+#                         queues[key].append(msg['value'])
+#                         print(f"Enqueued {key}: {msg['value']}")
+#                     except Exception as e:
+#                         print(f"Failed parse JSON from {key}: {e}")
+#             except BlockingIOError:
+#                 pass
+#             except Exception as e:
+#                 print(f"Error reading FIFO {key}: {e}")
+#         time.sleep(READ_INTERVAL)
+
+def reader_thread(pipe_paths, queues, stop_event):
     fds = {}
+    buffers = {}
     for key, path in pipe_paths.items():
         if key == 'base': continue
         fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK)
         fds[key] = fd
+        buffers[key] = ""
 
     while not stop_event.is_set():
         for key, fd in fds.items():
             try:
                 raw = os.read(fd, 4096)
-                if raw:
+                if not raw:
+                    continue
+                text = raw.decode('utf-8')
+                buffers[key] += text
+
+                lines = buffers[key].split("\n")
+                buffers[key] = lines.pop()
+
+                for line in lines:
+                    if not line.strip():
+                        continue
                     try:
-                        msg = json.loads(raw.decode('utf-8'))
+                        msg = json.loads(line)
                         queues[key].append(msg['value'])
                         print(f"Enqueued {key}: {msg['value']}")
                     except Exception as e:

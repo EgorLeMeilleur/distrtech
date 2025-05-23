@@ -22,19 +22,19 @@ PIPE_NAME = 'pipe_temp'
 GRPC_METHOD = 'SetRange'
 
 
-def handle_message(body: bytes, flag_ok: bool) -> bool:
+def handle_message(body, flag_ok):
     try:
         data = json.loads(body.decode())
         t = data['value']
         ts = data['ts']
         print(f"Received temp={t:.2f} at ts={ts}")
 
-        msg = {'type': 'humid', 'value': t, 'ts': ts}
-        pipes = get_aggregator_pipe('pipe_humid')
+        msg = {'type': 'temp', 'value': t, 'ts': ts}
+        pipes = get_aggregator_pipe('pipe_temp')
         if pipes:
             try:
                 for pipe in pipes:
-                    payload = json.dumps(msg).encode("utf-8")
+                    payload = (json.dumps(msg) + "\n").encode("utf-8")
                     flags   = os.O_WRONLY | os.O_NONBLOCK
                     fd = os.open(pipe, flags)
                     os.write(fd, payload)
@@ -46,7 +46,6 @@ def handle_message(body: bytes, flag_ok: bool) -> bool:
             print("Aggregator pipe not available, skipping send")
 
         if t > 33:
-
             if flag_ok:
                 flag_ok = False
                 try:
@@ -64,7 +63,6 @@ def handle_message(body: bytes, flag_ok: bool) -> bool:
                     print(f"Consul discovery failed: {e}")
 
         else:
-
             if not flag_ok:
                 flag_ok = True
                 try:
