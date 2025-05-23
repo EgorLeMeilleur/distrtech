@@ -1,6 +1,3 @@
-VENV := venv
-PYTHON := $(VENV)/bin/python
-
 SERVERS_DIR := servers
 CLIENTS_DIR := clients
 
@@ -13,14 +10,7 @@ TEMP_CLIENT := $(CLIENTS_DIR)/client_t.py
 HUMID_CLIENT := $(CLIENTS_DIR)/client_h.py
 VIDEO_CLIENT := $(CLIENTS_DIR)/client_video.py
 
-.PHONY: venv install server_t server_h server_video aggregator client_t client_h client_video clean
-
-venv:
-	python3 -m venv $(VENV)
-
-install: venv
-	$(PYTHON) -m pip install --upgrade pip
-	$(PYTHON) -m pip install -r requirements.txt
+.PHONY: server_t server_h server_video aggregator client_t client_h client_video
 
 server_t:
 	@echo "Starting Temperature Server..."
@@ -49,6 +39,3 @@ client_h:
 client_video:
 	@echo "Starting Video Client..."
 	$(PYTHON) $(VIDEO_CLIENT)
-
-clean:
-	rm -rf $(VENV)
