@@ -5,7 +5,7 @@ from services.config import CONSUL_ADDR, CONSUL_PORT
 
 BASE_URL = f"http://{CONSUL_ADDR}:{CONSUL_PORT}"
 
-def get_aggregator_pipe(pipe_key: str) -> str | None:
+def get_aggregator_pipe(pipe_key):
     url = f"{BASE_URL}/v1/catalog/service/aggregator"
     try:
         resp = requests.get(url, timeout=2)
