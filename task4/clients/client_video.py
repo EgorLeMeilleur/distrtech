@@ -84,6 +84,7 @@ def main():
                 time.sleep(1)
                 continue
 
+
             if filter_active:
                 frame = cv2.GaussianBlur(frame, (15, 15), 0)
 

@@ -10,7 +10,7 @@
         "password": "guest"
     },
     "postgres": {
-        "database": "analytics",
+        "database": "postgres",
         "user": "postgres",
         "password": "postgres",
         "address": "172.30.203.56",
