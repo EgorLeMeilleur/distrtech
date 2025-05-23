@@ -1,5 +1,9 @@
 version: '3.8'
 
+networks:
+  distrnet:
+    external: true
+
 services:
   consul:
     image: consul:1.15.4
@@ -7,6 +11,8 @@ services:
       - ./consul-config.json:/consul/config/agent.json
     ports: 
       - "8500:8500"
+    networks:
+      - distrnet
 
 
   rabbitmq:
@@ -14,6 +20,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    networks:
+      - distrnet
 
   database:
     image: postgres:13
@@ -23,3 +31,5 @@ services:
       POSTGRES_PASSWORD: postgres
     ports: 
       - "5432:5432"
+    networks:
+      - distrnet

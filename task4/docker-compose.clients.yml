@@ -1,0 +1,28 @@
+version: '3.8'
+
+networks:
+  distrnet:
+    external: true
+
+services:
+  temp_client:
+    build: .
+    command: python clients/client_t.py
+    networks:
+      - distrnet
+
+  humidity_client:
+    build: .
+    command: python clients/client_h.py
+    environment:
+      - CONSUL_ADDR=http://consul:8500
+      - CONSUL_PORT=8500
+      - RABBIT_URL=amqp://rabbitmq:5672/
+    networks:
+      - distrnet
+
+  video_client:
+    build: .
+    command: python clients/client_video.py
+    networks:
+      - distrnet

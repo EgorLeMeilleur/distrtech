@@ -1,0 +1,43 @@
+version: '3.8'
+
+networks:
+  distrnet:
+    external: true
+
+volumes:
+  pipes:
+    driver: local
+
+services:
+  temp_server:
+    build: .
+    command: python servers/server_t.py
+    networks:
+      - distrnet
+    volumes:
+      - pipes:/tmp/agg_pipes
+
+  humidity_server:
+    build: .
+    command: python servers/server_h.py
+    networks:
+      - distrnet
+    volumes:
+      - pipes:/tmp/agg_pipes
+
+  video_server:
+    build: .
+    command: python servers/server_video.py
+    networks:
+      - distrnet
+    volumes:
+      - pipes:/tmp/agg_pipes
+
+  aggregator:
+    build: .
+    command: python servers/aggregator.py
+    volumes:
+      - pipes:/tmp/agg_pipes
+    networks:
+      - distrnet
+    

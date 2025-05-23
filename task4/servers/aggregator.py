@@ -33,6 +33,18 @@ def register_to_consul(service_id, host, port, meta):
     resp.raise_for_status()
     print(f"Registered in Consul: {service_id}@{host}:{port}")
 
+@backoff.on_exception(backoff.expo, (psycopg2.OperationalError, psycopg2.DatabaseError), max_time=600)
+def connect_with_retry():
+    conn = psycopg2.connect(
+        dbname=POSTGRES_DB,
+        user=POSTGRES_USER,
+        password=POSTGRES_PASS,
+        host=POSTGRES_ADDR,
+        port=POSTGRES_PORT
+    )
+    conn.autocommit = False
+    return conn
+
 
 def start_consul_registration(service_id, host, port, meta):
     def loop():
@@ -103,11 +115,7 @@ def main():
     start_consul_registration(service_id, host, port, meta)
 
     try:
-        conn = psycopg2.connect(
-            dbname=POSTGRES_DB, user=POSTGRES_USER,
-            password=POSTGRES_PASS, host=POSTGRES_ADDR,
-            port=POSTGRES_PORT
-        )
+        conn = connect_with_retry()
         cur = conn.cursor()
         cur.execute('''
             CREATE TABLE IF NOT EXISTS readings (
@@ -117,7 +125,8 @@ def main():
                 temp DOUBLE PRECISION,
                 humid DOUBLE PRECISION,
                 video DOUBLE PRECISION
-            )''')
+            )
+        ''')
         conn.commit()
     except Exception as e:
         print(f"Postgres connection failed: {e}")
@@ -146,6 +155,8 @@ def main():
                         for key in ('pipe_temp','pipe_humid','pipe_video')]
                 non_null = [v for v in vals if v is not None]
                 result = sum(non_null)/len(non_null) if non_null else None
+                if result is None:
+                    continue
                 cur.execute(
                     "INSERT INTO readings(result, ts, temp, humid, video) VALUES (%s,%s,%s,%s,%s)",
                     (result, datetime.utcnow(), vals[0], vals[1], vals[2])
