@@ -1,5 +1,9 @@
-request
+requests
 pika
 grpcio 
 grpcio-tools
 psycopg2-binary
+backoff
+numpy
+pillow
+opencv-python
