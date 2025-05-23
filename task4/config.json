@@ -1,10 +1,10 @@
 {
     "consul": {
-        "address": "172.30.203.56",
+        "address": "192.168.100.10",
         "port": "8500"
     },
     "rabbitmq": {
-        "address": "172.30.203.56",
+        "address": "192.168.100.10",
         "port": "5672",
         "user": "guest",
         "password": "guest"
@@ -13,7 +13,7 @@
         "database": "postgres",
         "user": "postgres",
         "password": "postgres",
-        "address": "172.30.203.56",
+        "address": "192.168.100.10",
         "port": "5432"
     }
 
