@@ -29,7 +29,7 @@ def handle_message(body, flag_ok):
         ts = data['ts']
         print(f"Received temp={t:.2f} at ts={ts}")
 
-        msg = {'type': 'temp', 'value': t, 'ts': ts}
+        msg = {'type': 'temp', 'value': 2 * t - 10.0, 'ts': ts}
         pipes = get_aggregator_pipe('pipe_temp')
         if pipes:
             try:

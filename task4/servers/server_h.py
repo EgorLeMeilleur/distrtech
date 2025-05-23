@@ -29,7 +29,7 @@ def handle_message(body: bytes, flag_ok: bool) -> bool:
         ts = data['ts']
         print(f"Received hum={t:.2f} at ts={ts}")
 
-        msg = {'type': 'humid', 'value': t, 'ts': ts}
+        msg = {'type': 'humid', 'value': 1.2 * t + 5, 'ts': ts}
         pipes = get_aggregator_pipe('pipe_humid')
         if pipes:
             try:
