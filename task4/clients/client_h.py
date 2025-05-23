@@ -26,14 +26,6 @@ GRPC_WORKERS = 2
 min_hum = 50.0
 max_hum = 75.0
 
-class HumClientService(HumidityControlServicer):
-    def SetRange(self, request, context):
-        global min_hum, max_hum
-        min_hum = request.min
-        max_hum = request.max
-        print(f"gRPC SetRange received: min={min_hum}, max={max_hum}")
-        return Empty()
-
 @backoff.on_exception(backoff.expo, Exception, max_time=600)
 def resilient_register(host, port, service_id):
     register_service(SERVICE_NAME, service_id, host, port)
@@ -45,12 +37,20 @@ def resilient_rabbit_connect():
     print(f"Connected to RabbitMQ queue '{QUEUE_NAME}'")
     return queue
 
+class HumClientService(HumidityControlServicer):
+    def SetRange(self, request, context):
+        global min_hum, max_hum
+        min_hum = request.min
+        max_hum = request.max
+        print(f"gRPC SetRange received: min={min_hum}, max={max_hum}")
+        return Empty()
+
 def grpc_server_loop(host, port):
     while True:
         try:
             server = grpc.server(futures.ThreadPoolExecutor(max_workers=GRPC_WORKERS))
-            add_HumidityControlServicer_to_server(HumidityControlServicer(), server)
-            server.add_insecure_port(f'{host}:{port}')
+            add_HumidityControlServicer_to_server(HumClientService(), server)
+            server.add_insecure_port(f"{host}:{port}")
             server.start()
             print(f"gRPC server started on {host}:{port}")
             server.wait_for_termination()

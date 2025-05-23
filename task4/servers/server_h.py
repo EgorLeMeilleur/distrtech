@@ -130,7 +130,6 @@ def main():
                     time.sleep(0.1)
             except Exception as e:
                 print(f"Error in processing loop: {e}")
-                time.sleep(1)
     except KeyboardInterrupt:
         print("Interrupted by user")
     finally:
