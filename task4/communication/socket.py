@@ -38,7 +38,7 @@ class SocketCommunication:
             self.close_connection()
             return False
 
-    def receive_data(self) -> bytes | None:
+    def receive_data(self):
         if not self.conn:
             if not self.accept_connection():
                 return None
@@ -58,7 +58,7 @@ class SocketCommunication:
             self.close_connection()
             return None
 
-    def send_data(self, data: bytes):
+    def send_data(self, data):
         client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         client.settimeout(self.timeout)
         client.connect((self.host, self.port))
