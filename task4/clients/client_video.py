@@ -107,8 +107,6 @@ def main():
         print("Stopped by user")
     finally:
         cap.release()
-        if sock:
-            sock.close_connection()
         try:
             deregister_service(service_id)
             print("Video client shut down")
